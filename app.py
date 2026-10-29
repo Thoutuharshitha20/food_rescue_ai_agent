@@ -262,14 +262,9 @@ evaluation_chain = make_agent_chain(food_evaluation_agent)
 matching_chain = make_agent_chain(ngo_matching_agent)
 
 
-def run_both_agents(x: Any) -> str:
-    """Run the evaluation agent first, then the matching agent."""
-    user_input = x["input"] if isinstance(x, dict) else x.input
-
-    evaluation_result = evaluation_chain.invoke({"input": user_input})
-matching_result = matching_chain.invoke({
-    "input": ...
-})
+def run_both_agents(x):
+    evaluation_result = "..."
+    matching_result = "..."
 
     return (
         "=== AGENT 1: FOOD EVALUATION ===\n"
