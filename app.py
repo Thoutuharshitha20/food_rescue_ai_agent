@@ -1,13 +1,25 @@
 from langchain_core.runnables import RunnableLambda
+
+
+# Format the input for the agents
+def format_for_agent(x):
+    user_input = x["input"] if isinstance(x, dict) else x.input
+
+    return {
+        "messages": [("user", user_input)]
+    }
+
+
+# Run both agents
 def run_both_agents(x):
     user_input = x["input"] if isinstance(x, dict) else x.input
 
-    # Run Agent 1: Evaluate the food donation
+    # Agent 1: Evaluate the food donation
     evaluation_result = evaluation_chain.invoke({
         "input": user_input
     })
 
-    # Run Agent 2: Match suitable NGOs and volunteers
+    # Agent 2: Match suitable NGOs and volunteers
     matching_input = (
         "Analyze the following food donation and suggest suitable recipients. "
         "Use the matching tool when sufficient information is available. "
@@ -21,7 +33,7 @@ def run_both_agents(x):
         "input": matching_input
     })
 
-    # Return both actual agent responses
+    # Return both agent responses
     return (
         "=== AGENT 1: FOOD EVALUATION ===\n"
         f"{evaluation_result}\n\n"
@@ -30,10 +42,16 @@ def run_both_agents(x):
     )
 
 
+# Create the combined chain
 combined_chain = (
     RunnableLambda(format_for_agent)
     | RunnableLambda(
-        lambda state: {"input": state["messages"][0][1]}
+        lambda state: {
+            "input": state["messages"][0][1]
+        }
     )
     | RunnableLambda(run_both_agents)
-).with_types(input_type=AgentInput, output_type=str)
+).with_types(
+    input_type=AgentInput,
+    output_type=str
+)
