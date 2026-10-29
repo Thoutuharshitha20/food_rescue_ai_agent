@@ -267,14 +267,9 @@ def run_both_agents(x: Any) -> str:
     user_input = x["input"] if isinstance(x, dict) else x.input
 
     evaluation_result = evaluation_chain.invoke({"input": user_input})
-    matching_result = matching_chain.invoke({
-        "input": (
-            "Use the donation details from this user message and the evaluation result to suggest "
-            "recipients. If details needed by the matching tool are missing, ask for them instead "
-            "of guessing.\n\nUser's donation details:\n"
-            f"{user_input}\n\nFood Evaluation Agent result:\n{evaluation_result}"
-        )
-    })
+matching_result = matching_chain.invoke({
+    "input": ...
+})
 
     return (
         "=== AGENT 1: FOOD EVALUATION ===\n"
