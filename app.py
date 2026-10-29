@@ -1,4 +1,4 @@
-
+from langchain_core.runnables import RunnableLambda
 def run_both_agents(x):
     user_input = x["input"] if isinstance(x, dict) else x.input
 
