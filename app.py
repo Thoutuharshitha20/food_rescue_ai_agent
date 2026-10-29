@@ -62,10 +62,12 @@ def build_agents():
         raise RuntimeError("GOOGLE_API_KEY is not configured.")
 
     model = ChatGoogleGenerativeAI(
-        model="gemini-3.8-flash",
-        temperature=0,
-        google_api_key=api_key,
-    )
+    model="gemini-3.8-flash",
+    google_api_key=api_key,
+    thinking_level="low",
+    timeout=60,
+    max_retries=1,
+)
 
     evaluation_agent = create_agent(
         model=model,
