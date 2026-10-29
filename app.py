@@ -222,23 +222,32 @@ def format_for_agent(x: Any) -> dict:
     return {"messages": [("user", user_input)]}
 
 
+
 def extract_text_response(agent_output: Any) -> str:
     if not isinstance(agent_output, dict):
         return str(agent_output)
 
-    messages = agent_output.get("messages")
-    if messages:
-        last = messages[-1]
-        content = getattr(last, "content", None)
-        return content if isinstance(content, str) else str(content or last)
+    messages = agent_output.get("messages", [])
 
-    for value in agent_output.values():
-        if isinstance(value, dict) and value.get("messages"):
-            last = value["messages"][-1]
-            content = getattr(last, "content", None)
-            return content if isinstance(content, str) else str(content or last)
+    for message in reversed(messages):
+        content = getattr(message, "content", None)
+
+        if content is None and isinstance(message, dict):
+            content = message.get("content")
+
+        if isinstance(content, str) and content.strip():
+            return content
+
+        if isinstance(content, list):
+            parts = []
+            for item in content:
+                if isinstance(item, dict) and item.get("type") == "text":
+                    parts.append(item.get("text", ""))
+            if parts:
+                return "\n".join(parts)
 
     return str(agent_output)
+
 
 
 def make_agent_chain(agent):
